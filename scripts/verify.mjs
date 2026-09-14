@@ -13,6 +13,7 @@ for(const [name,html] of docs){
  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size,name+' duplicate ids');
  for(const match of html.matchAll(/(?:href|src)="([^"]+)"/g)){
   const url=match[1];if(/^(https?:|tel:|data:)/.test(url))continue;
+  assert.ok(!url.startsWith('/'),`${name}: root-relative URL breaks project Pages: ${url}`);
   const [path,hash]=url.split('#');const file=path||name;const content=docs.get(file);
   assert.ok((await stat(resolve(root,file))).size>0,`${name}: ${url}`);
   if(hash){assert.ok(content?.includes(`id="${hash}"`),`${name}: missing anchor ${url}`);}
